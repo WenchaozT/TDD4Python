@@ -18,8 +18,8 @@ class NewVistorTest(unittest.TestCase):
         self.browser.get('http://localhost:8000')
 
         #检查网页标题
-        self.assertIn('To-Do', self.browser.title) 
-        self.fail('Finish the test!')
+        self.assertIn('Todo', self.browser.title) 
+        # self.fail('Finish the test!')
 
         #应用邀请她输入一个待办事项
 
@@ -38,7 +38,7 @@ class NewVistorTest(unittest.TestCase):
         #他访问了生成的URL，显示了之前填入的待办事项
 
         #他很满意，关闭了浏览器
-        browser.quit()
+        self.browser.quit()
 
 if __name__ == '__main__':
     unittest.main(warnings='ignore')
