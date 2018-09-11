@@ -1,6 +1,8 @@
 #coding:utf-8
 
 from selenium import webdriver
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.keys import Keys
 import unittest
 
@@ -50,6 +52,7 @@ class NewVistorTest(unittest.TestCase):
 
         #页面再次更新，显示了上述两个事项  
         self.check_td_in_tr("1: learn django")
+        self.check_td_in_tr("2: learn selenium")
         self.check_td_in_tr("2: learn selenium")
 
         #T要确定该网站是否保存他的清单
