@@ -8,14 +8,6 @@ from django.urls import resolve
 from todolists.models import Item
 from todolists.views import home_page
 
-def newHttpRequest(request_method='POST', request_object=None, request_text=None):
-    _request = HttpRequest()
-    if request_method not in ['POST', 'GET']:
-        return _request
-    elif request_method == 'POST':
-        _request.method = 'POST'
-        _request.POST[request_object] = request_text
-        return _request
 
 class HomePageTest(TestCase):
 
@@ -42,18 +34,19 @@ class HomePageTest(TestCase):
         request.POST['item_text'] = 'test item'
 
         home_page(request)
-        
+
         self.assertEqual(Item.objects.count(), 1)
         self.assertEqual(Item.objects.first().text, request.POST['item_text'])
 
     def test_home_page_redirects_after_POST(self):
-        request = newHttpRequest('POST', 'item_text', 'A new item')
+        request = HttpRequest()
+        request.method = 'POST'
+        request.POST['item_text'] = 'test item'
 
         response = home_page(request)
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['location'], '/')
-
 
     def test_home_page_only_saves_items_necessary(self):
         request = HttpRequest()
@@ -66,6 +59,16 @@ class HomePageTest(TestCase):
         # response = home_page(request)
         # print(response.content.decode())
         self.assertEqual(Item.objects.count(), 1)
+
+    def test_home_page_displays_all_items(self):
+        Item.objects.create(text='item 1')
+        Item.objects.create(text='item 2')
+
+        request = HttpRequest()
+        response = home_page(request)
+
+        self.assertIn('item 1', response.content.decode())
+        self.assertIn('item 2', response.content.decode())
 
 
 class ItemModelTest(TestCase):
