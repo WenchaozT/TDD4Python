@@ -2,10 +2,10 @@
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-import unittest
+from django.test import LiveServerTestCase
 
 
-class NewVistorTest(unittest.TestCase):
+class NewVistorTest(LiveServerTestCase):
 
     def setUp(self):
         self.browser = webdriver.Chrome()
@@ -21,7 +21,7 @@ class NewVistorTest(unittest.TestCase):
 
     def test4start_a_todolist(self):
         # T想开发一个todo-list,这是首页
-        self.browser.get('http://localhost:8000')
+        self.browser.get(self.live_server_url)
 
         # 检查网页标题和头部是否都包含Todo
         self.assertIn('Todo', self.browser.title)
@@ -59,7 +59,4 @@ class NewVistorTest(unittest.TestCase):
 
         # 他很满意，关闭了浏览器
         self.browser.quit()
-
-
-if __name__ == '__main__':
-    unittest.main(warnings='ignore')
+        self.fail('Finish the test~')
