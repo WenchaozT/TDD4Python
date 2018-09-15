@@ -46,7 +46,7 @@ class HomePageTest(TestCase):
         response = home_page(request)
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], '/')
+        self.assertEqual(response['location'], '/todolists/worldshare')
 
     def test_home_page_only_saves_items_necessary(self):
         request = HttpRequest()

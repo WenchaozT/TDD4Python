@@ -14,7 +14,7 @@ class NewVistorTest(LiveServerTestCase):
     def tearDown(self):
         self.browser.quit()
 
-    def check_td_in_tr(self, exp_text):
+    def checkRowInTable(self, exp_text):
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
         self.assertIn(exp_text, [row.text for row in rows])
@@ -40,7 +40,9 @@ class NewVistorTest(LiveServerTestCase):
 
         # T按回车键后，页面更新，待办事项表格中新增“1：学习django”
         inputbox.send_keys(Keys.ENTER)
-        self.check_td_in_tr("1: learn django")
+        wenchaozURL = self.browser.current_url
+        self.assertRegex(wenchaozURL, '/lists/.+')
+        self.checkRowInTable("1: learn django")
 
         # 页面中仍有文本框，并可以继续输入
         # T输入了“实践使用selenium”
@@ -49,8 +51,8 @@ class NewVistorTest(LiveServerTestCase):
         inputbox.send_keys(Keys.ENTER)
 
         # 页面再次更新，显示了上述两个事项
-        self.check_td_in_tr("1: learn django")
-        self.check_td_in_tr("2: learn selenium")
+        self.checkRowInTable("1: learn django")
+        self.checkRowInTable("2: learn selenium")
 
         # T要确定该网站是否保存他的清单
         # 网站生成了一个URL,并配有相关说明
@@ -58,5 +60,31 @@ class NewVistorTest(LiveServerTestCase):
         # 他访问了生成的URL，显示了之前填入的待办事项
 
         # 他很满意，关闭了浏览器
+        ##避免cookies泄露个人信息
         self.browser.quit()
+
+        #另一用户creep访问了网站,看不到wenchaoz创建的清单
+        self.browser = webdriver.Chrome()
+        self.browser.get(self.live_server_url)
+        pageText = self.browser.find_element_by_tag_name('body').text
+        self.assertNotIn('Learn django', pageText)
+        self.assertNotIn('Learn selenium', pageText)
+
+        # creep输入了“学习django”
+        inputbox.send_keys('creep')
+
+        # creep按回车键后，页面更新
+        inputbox.send_keys(Keys.ENTER)
+
+        # creep获得了属于他的URL
+        creepURL = self.browser.current_url
+        self.assertRegex(creepURL, '/lists/.+')
+        self.assertNotEqual(wenchaozURL, creepURL)
+
+        #只有creep的清单，没有wenchaoz的
+        pageText = self.browser.find_element_by_tag_name('body').text
+        self.assertIn('creep', pageText)
+        self.assertNotIn('Learn django', pageText)
+        self.assertNotIn('Learn selenium', pageText)
+
         self.fail('Finish the test~')
