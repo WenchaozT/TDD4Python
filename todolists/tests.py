@@ -60,16 +60,6 @@ class HomePageTest(TestCase):
         # print(response.content.decode())
         self.assertEqual(Item.objects.count(), 1)
 
-    def test_home_page_displays_all_items(self):
-        Item.objects.create(text='item 1')
-        Item.objects.create(text='item 2')
-
-        request = HttpRequest()
-        response = home_page(request)
-
-        self.assertIn('item 1', response.content.decode())
-        self.assertIn('item 2', response.content.decode())
-
 
 class ItemModelTest(TestCase):
 
@@ -87,3 +77,19 @@ class ItemModelTest(TestCase):
         self.assertEqual(saved_items.count(), 2)
         self.assertEqual([saved_items[0], saved_items[1]],
                          [first_item, second_item])
+
+
+class ListViewTest(TestCase):
+
+    def test_uses_todolist_template(self):
+        response = self.client.get('/todolists/worldshare/')
+        self.assertTemplateUsed(response, 'todolists/todolists.html')
+
+    def test_displays_all_items(self):
+        Item.objects.create(text='item 1')
+        Item.objects.create(text='item 2')
+
+        response = self.client.get('/todolists/worldshare/')
+
+        self.assertContains(response, 'item 1')
+        self.assertContains(response, 'item 2')

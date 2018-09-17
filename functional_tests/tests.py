@@ -3,8 +3,10 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from django.test import LiveServerTestCase
+# import unittest
 
 
+# class NewVistorTest(unittest.TestCase):
 class NewVistorTest(LiveServerTestCase):
 
     def setUp(self):
@@ -22,6 +24,7 @@ class NewVistorTest(LiveServerTestCase):
     def test4start_a_todolist(self):
         # T想开发一个todo-list,这是首页
         self.browser.get(self.live_server_url)
+        # self.browser.get("http://localhost:8000")
 
         # 检查网页标题和头部是否都包含Todo
         self.assertIn('Todo', self.browser.title)
@@ -41,7 +44,7 @@ class NewVistorTest(LiveServerTestCase):
         # T按回车键后，页面更新，待办事项表格中新增“1：学习django”
         inputbox.send_keys(Keys.ENTER)
         wenchaozURL = self.browser.current_url
-        self.assertRegex(wenchaozURL, '/lists/.+')
+        self.assertRegex(wenchaozURL, '/todolists/.+')
         self.checkRowInTable("1: learn django")
 
         # 页面中仍有文本框，并可以继续输入
@@ -60,10 +63,11 @@ class NewVistorTest(LiveServerTestCase):
         # 他访问了生成的URL，显示了之前填入的待办事项
 
         # 他很满意，关闭了浏览器
-        ##避免cookies泄露个人信息
+        # 避免cookies泄露个人信息
         self.browser.quit()
+        print('wenchaoz close windows.')
 
-        #另一用户creep访问了网站,看不到wenchaoz创建的清单
+        # 另一用户creep访问了网站,看不到wenchaoz创建的清单
         self.browser = webdriver.Chrome()
         self.browser.get(self.live_server_url)
         pageText = self.browser.find_element_by_tag_name('body').text
@@ -71,6 +75,7 @@ class NewVistorTest(LiveServerTestCase):
         self.assertNotIn('Learn selenium', pageText)
 
         # creep输入了“学习django”
+        inputbox = self.browser.find_element_by_id('id_new_item')
         inputbox.send_keys('creep')
 
         # creep按回车键后，页面更新
@@ -78,10 +83,10 @@ class NewVistorTest(LiveServerTestCase):
 
         # creep获得了属于他的URL
         creepURL = self.browser.current_url
-        self.assertRegex(creepURL, '/lists/.+')
+        self.assertRegex(creepURL, '/todolists/.+')
         self.assertNotEqual(wenchaozURL, creepURL)
 
-        #只有creep的清单，没有wenchaoz的
+        # 只有creep的清单，没有wenchaoz的
         pageText = self.browser.find_element_by_tag_name('body').text
         self.assertIn('creep', pageText)
         self.assertNotIn('Learn django', pageText)
