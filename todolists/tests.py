@@ -28,38 +28,6 @@ class HomePageTest(TestCase):
             re.sub(csrf_regex, '', expected_html)
         )
 
-    def test_home_page_save_POST_request(self):
-        request = HttpRequest()
-        request.method = 'POST'
-        request.POST['item_text'] = 'test item'
-
-        home_page(request)
-
-        self.assertEqual(Item.objects.count(), 1)
-        self.assertEqual(Item.objects.first().text, request.POST['item_text'])
-
-    def test_home_page_redirects_after_POST(self):
-        request = HttpRequest()
-        request.method = 'POST'
-        request.POST['item_text'] = 'test item'
-
-        response = home_page(request)
-
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], '/todolists/worldshare')
-
-    def test_home_page_only_saves_items_necessary(self):
-        request = HttpRequest()
-        home_page(request)
-        self.assertEqual(Item.objects.count(), 0)
-
-        request.method = 'POST'
-        request.POST['item_text'] = 'learn'
-        home_page(request)
-        # response = home_page(request)
-        # print(response.content.decode())
-        self.assertEqual(Item.objects.count(), 1)
-
 
 class ItemModelTest(TestCase):
 
@@ -93,3 +61,27 @@ class ListViewTest(TestCase):
 
         self.assertContains(response, 'item 1')
         self.assertContains(response, 'item 2')
+
+
+class NewListTest(TestCase):
+
+    def test_home_page_save_POST_request(self):
+        self.client.post(
+            '/todolists/new',
+            data={
+                'item_text': 'A new item'
+            }
+        )
+        self.assertEqual(Item.objects.count(), 1)
+        self.assertEqual(Item.objects.first().text, 'A new item')
+
+    def test_home_page_redirects_after_POST(self):
+        response = self.client.post(
+            '/todolists/new',
+            data={
+                'item_text': 'A new item'
+            }
+        )
+        print(response)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'], '/todolists/worldshare/')
