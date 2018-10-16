@@ -5,7 +5,7 @@ from django.template.loader import render_to_string
 from django.test import TestCase
 from django.urls import resolve
 
-from todolists.models import Item
+from todolists.models import Item, List
 from todolists.views import home_page
 
 
@@ -29,22 +29,31 @@ class HomePageTest(TestCase):
         )
 
 
-class ItemModelTest(TestCase):
+class ListAndItemModelTest(TestCase):
 
     def test_saving_and_retrieving_items(self):
+        list_ = List()
+        list_.save()
+
         first_item = Item()
         first_item.text = 'The first list item'
+        first_item.list = list_
         first_item.save()
 
         second_item = Item()
         second_item.text = 'The second item'
+        second_item.list = list_
         second_item.save()
 
+        saved_list = List.objects.first()
+        self.assertEqual(saved_list, list_)
+
         saved_items = Item.objects.all()
-        # print(saved_items[0].text)
         self.assertEqual(saved_items.count(), 2)
-        self.assertEqual([saved_items[0], saved_items[1]],
-                         [first_item, second_item])
+        self.assertEqual(saved_items[0], first_item)
+        self.assertEqual(saved_items[0].list, list_)
+        self.assertEqual(saved_items[1], second_item)
+        self.assertEqual(saved_items[1].list, list_)
 
 
 class ListViewTest(TestCase):
@@ -54,8 +63,9 @@ class ListViewTest(TestCase):
         self.assertTemplateUsed(response, 'todolists/todolists.html')
 
     def test_displays_all_items(self):
-        Item.objects.create(text='item 1')
-        Item.objects.create(text='item 2')
+        list_ = List.objects.create()
+        Item.objects.create(text='item 1', list=list_)
+        Item.objects.create(text='item 2', list=list_)
 
         response = self.client.get('/todolists/worldshare/')
 
@@ -82,6 +92,5 @@ class NewListTest(TestCase):
                 'item_text': 'A new item'
             }
         )
-        print(response)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['location'], '/todolists/worldshare/')
