@@ -20,6 +20,7 @@ from todolists import views
 urlpatterns = [
     re_path(r'^admin/', admin.site.urls),
     re_path(r'^$', views.home_page, name='home_page'),
-    re_path(r'^todolists/worldshare/$', views.view_list, name='view_list'),
     re_path(r'^todolists/new$', views.new_list, name='new_list'),
+    re_path(r'^todolists/(\d+)/$', views.view_list, name='view_list'),
+    re_path(r'^todolists/(\d+)/add_item$', views.add_item, name='add_item'),
 ]

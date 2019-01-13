@@ -92,4 +92,4 @@ class NewVistorTest(LiveServerTestCase):
         self.assertNotIn('Learn django', pageText)
         self.assertNotIn('Learn selenium', pageText)
 
-        self.fail('Finish the test~')
+        # self.fail('Finish the test~')
