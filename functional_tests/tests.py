@@ -2,12 +2,12 @@
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from django.test import LiveServerTestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 # import unittest
 
 
 # class NewVistorTest(unittest.TestCase):
-class NewVistorTest(LiveServerTestCase):
+class NewVistorTest(StaticLiveServerTestCase):
 
     def setUp(self):
         self.browser = webdriver.Chrome()
@@ -113,4 +113,3 @@ class NewVistorTest(LiveServerTestCase):
             512,
             delta=5
         )
-        
