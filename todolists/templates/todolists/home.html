@@ -1,15 +1,5 @@
-<html>
+{% extends 'base.html' %}
 
-<head>
-    <title>Todolists</title>
-</head>
+{% block header_text %}New todolist{% endblock %}
 
-<body>
-    <h1>Create A New Todolists</h1>
-    <form method="POST" action='/todolists/new'>
-        <input name="item_text" id="id_new_item" placeholder="Enter a to-do item" />
-        {% csrf_token %}
-    </form>
-</body>
-
-</html>
+{% block form_action %}/todolists/new{% endblock %}

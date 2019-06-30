@@ -1,15 +1,10 @@
-<html>
+{% extends 'base.html' %}
 
-<head>
-    <title>Todolists</title>
-</head>
+{% block header_text %}Todolist{% endblock %}
 
-<body>
-    <h1>Your Todolists</h1>
-    <form method="POST" action="/todolists/{{list.id}}/add_item">
-        <input name="item_text" id="id_new_item" placeholder="Enter a to-do item" />
-        {% csrf_token %}
-    </form>
+{% block form_action %}/todolists/{{list.id}}/add_item{% endblock %}
+
+{% block table %}
     <table id="id_list_table">
         {% for item in list.item_set.all %}
         <tr>
@@ -17,6 +12,4 @@
         </tr>
         {% endfor %}
     </table>
-</body>
-
-</html>
+{% endblock %}
