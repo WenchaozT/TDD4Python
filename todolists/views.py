@@ -1,5 +1,5 @@
 from django.shortcuts import redirect, render
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 
 from todolists.models import Item, List
 
@@ -34,9 +34,13 @@ def json_list(request, list_id):
 
 
 def delete_item(request, list_id, item_id):
-    list_ = List.objects.get(id=list_id)
-    Item.objects.filter(list=list_, id=item_id).delete()
-    return redirect('/todolists/%d/' % (list_.id,))
+    try:
+        list_ = List.objects.get(id=list_id)
+        Item.objects.filter(list=list_, id=item_id).delete()
+        return redirect('/todolists/%d/' % (list_.id,))
+    except List.DoesNotExist:
+        return JsonResponse(
+            {'result': 404, 'msg': f'List {list_id} does not exist'})
 
 
 def delete_list(request, list_id):
@@ -44,5 +48,7 @@ def delete_list(request, list_id):
         list_ = List.objects.get(id=list_id)
         Item.objects.filter(list=list_).delete()
         List.objects.filter(id=list_id).delete()
+    except List.DoesNotExist:
+        raise Http404("List does not exist")
     finally:
         return redirect('/')
