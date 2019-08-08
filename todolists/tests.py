@@ -131,3 +131,37 @@ class NewItemTest(TestCase):
 
         print(response)
         self.assertRedirects(response, '/todolists/%d/' % (right_list.id,))
+
+
+class DeleteItemTest(TestCase):
+    def test_delete_item(self):
+        del_list = List.objects.create()
+        self.client.post(
+            '/todolists/%d/add_item' % (del_list.id,),
+            data={'item_text': 'del_item'}
+        )
+
+        del_item = Item.objects.first()
+
+        self.client.post(
+            '/todolists/%d/%d/delete' % (del_list.id, del_item.id)
+        )
+        self.assertEqual(Item.objects.count(), 0)
+
+    def test_delete_list(self):
+        self.client.post(
+            '/todolists/new',
+            data={
+                'item_text': 'A new item'
+            }
+        )
+
+        del_list = List.objects.first()
+
+        response = self.client.post(
+            '/todolists/%d/delete' % del_list.id
+        )
+
+        self.assertEqual(Item.objects.count(), 0)
+        self.assertEqual(List.objects.count(), 0)
+        self.assertRedirects(response, '/')

@@ -3,12 +3,12 @@
 {% block header_text %}
     Todolist
     <button id="delete_list" type="button" class="btn btn-warning btn-circle" title="删除列表"
-            onclick="window.location.href='/todolists/{{ list.id }}/delete'">
+            onclick="window.location.href='{% url 'delete_list' list.id %}'">{% csrf_token %}
         <i class="glyphicon glyphicon-remove"></i>
     </button>
 {% endblock %}
 
-{% block form_action %}/todolists/{{ list.id }}/add_item{% endblock %}
+{% block form_action %}{% url 'add_item' list.id %}{% endblock %}
 
 {% block table %}
     <table id="id_list_table">
@@ -16,8 +16,9 @@
             <tr>
                 <td>
                     {{ forloop.counter }}: {{ item.text }}
-                    <button id="delete_item" type="button" class="btn btn-warning btn-circle" title="删除待办项"
-                            onclick="window.location.href='/todolists/{{ list.id }}/{{ item.id }}/delete'">
+                    <button id="delete_item{{ forloop.counter }}" type="button" class="btn btn-warning btn-circle" title="删除待办项"
+                            onclick="window.location.href='{% url 'delete_item' list.id item.id %}'">
+                        {% csrf_token %}
                         <i class="glyphicon glyphicon-remove"></i>
                     </button>
                 </td>

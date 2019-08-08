@@ -1,8 +1,10 @@
 # coding:utf-8
 
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+
+
 # import unittest
 
 
@@ -43,8 +45,8 @@ class NewVistorTest(StaticLiveServerTestCase):
 
         # T按回车键后，页面更新，待办事项表格中新增“1：学习django”
         inputbox.send_keys(Keys.ENTER)
-        wenchaozURL = self.browser.current_url
-        self.assertRegex(wenchaozURL, '/todolists/.+')
+        wenchaoz_url = self.browser.current_url
+        self.assertRegex(wenchaoz_url, '/todolists/.+')
         self.checkRowInTable("1: learn django")
 
         # 页面中仍有文本框，并可以继续输入
@@ -70,11 +72,11 @@ class NewVistorTest(StaticLiveServerTestCase):
         # 另一用户creep访问了网站,看不到wenchaoz创建的清单
         self.browser = webdriver.Chrome()
         self.browser.get(self.live_server_url)
-        pageText = self.browser.find_element_by_tag_name('body').text
-        self.assertNotIn('Learn django', pageText)
-        self.assertNotIn('Learn selenium', pageText)
+        page_text = self.browser.find_element_by_tag_name('body').text
+        self.assertNotIn('Learn django', page_text)
+        self.assertNotIn('Learn selenium', page_text)
 
-        # creep输入了“学习django”
+        # creep输入了“creep”
         inputbox = self.browser.find_element_by_id('id_new_item')
         inputbox.send_keys('creep')
 
@@ -82,18 +84,40 @@ class NewVistorTest(StaticLiveServerTestCase):
         inputbox.send_keys(Keys.ENTER)
 
         # creep获得了属于他的URL
-        creepURL = self.browser.current_url
-        self.assertRegex(creepURL, '/todolists/.+')
-        self.assertNotEqual(wenchaozURL, creepURL)
+        creep_url = self.browser.current_url
+        self.assertRegex(creep_url, '/todolists/.+')
+        self.assertNotEqual(wenchaoz_url, creep_url)
 
         # 只有creep的清单，没有wenchaoz的
-        pageText = self.browser.find_element_by_tag_name('body').text
-        self.assertIn('creep', pageText)
-        self.assertNotIn('Learn django', pageText)
-        self.assertNotIn('Learn selenium', pageText)
+        page_text = self.browser.find_element_by_tag_name('body').text
+        self.assertIn('creep', page_text)
+        self.assertNotIn('Learn django', page_text)
+        self.assertNotIn('Learn selenium', page_text)
 
+        # creep决定删除仅有的待办项
+        del_item_button = self.browser.find_element_by_id('delete_item1')
+        del_item_button.click()
+
+        # 待办项已被删除
+        page_text = self.browser.find_element_by_tag_name('body').text
+        self.assertNotIn('creep', page_text)
+
+        # creep决定删除列表
+        del_list_button = self.browser.find_element_by_id('delete_list')
+        del_list_button.click()
+
+        # 重定向至首页
+        del_list_redirect_url = self.browser.current_url
+        print(del_list_redirect_url)
+        self.assertRegex(del_list_redirect_url, r'http://localhost:\d+/$')
+
+        # 列表被删除
+        print(creep_url)
+        self.browser.get(creep_url)
+        page_text = self.browser.find_element_by_tag_name('body').text
+        print(page_text)
+        self.assertIn('404', page_text)
         # self.fail('Finish the test~')
-
 
     def test_layout_and_styling(self):
         self.browser.get(self.live_server_url)
