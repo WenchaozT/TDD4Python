@@ -4,16 +4,16 @@
 <head>
     <title>Todolists</title>
     <meta name="viewport" content="width=device-width">
-    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="//cdn.staticfile.org/twitter-bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link href="/static/bootstrap/css/custom.css" rel="stylesheet" media="screen">
     <script src="//cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
-    <script src="//cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="//cdn.staticfile.org/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 
 <body>
 <div class="container">
 
-    <div id="myCarousel" class="carousel slide">
+    <div id="myCarousel" class="carousel slide hidden-xs">
         <ol class="carousel-indicators">
             <li data-target="#myCarousel" data-slide-to="0"></li>
             <li data-target="#myCarousel" data-slide-to="1" class="active"></li>
@@ -47,11 +47,11 @@
     </div>
 
     <div class="row">
-        <div class="col-md-12">
-            <div class="text-center">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="jumbotron text-center">
                 <h1>{% block header_text %}{% endblock %}</h1>
                 <form method="POST" action="{% block form_action %}{% endblock %}">
-                    <input name="item_text" id="id_new_item" placeholder="Enter a to-do item"/>
+                    <input name="item_text" id="new_item" placeholder="Enter a to-do item"/>
                     {% csrf_token %}
                 </form>
             </div>
@@ -59,8 +59,7 @@
     </div>
 
     <div class="row">
-        <div class="col-md-5"></div>
-        <div>
+        <div class="col-md-6 col-md-offset-3">
             {% block table %}
             {% endblock %}
         </div>
