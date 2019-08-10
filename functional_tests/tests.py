@@ -34,7 +34,7 @@ class NewVistorTest(StaticLiveServerTestCase):
         self.assertIn('Todo', header_text)
 
         # 应用邀请她输入一个待办事项
-        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox = self.browser.find_element_by_id('new_item')
         self.assertEqual(
             inputbox.get_attribute('placeholder'),
             'Enter a to-do item'
@@ -51,7 +51,7 @@ class NewVistorTest(StaticLiveServerTestCase):
 
         # 页面中仍有文本框，并可以继续输入
         # T输入了“实践使用selenium”
-        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox = self.browser.find_element_by_id('new_item')
         inputbox.send_keys('learn selenium')
         inputbox.send_keys(Keys.ENTER)
 
@@ -77,7 +77,7 @@ class NewVistorTest(StaticLiveServerTestCase):
         self.assertNotIn('Learn selenium', page_text)
 
         # creep输入了“creep”
-        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox = self.browser.find_element_by_id('new_item')
         inputbox.send_keys('creep')
 
         # creep按回车键后，页面更新
@@ -123,7 +123,7 @@ class NewVistorTest(StaticLiveServerTestCase):
         self.browser.get(self.live_server_url)
         self.browser.set_window_size(1024, 768)
 
-        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox = self.browser.find_element_by_id('new_item')
         self.assertAlmostEqual(
             inputbox.location['x'] + inputbox.size['width'] / 2,
             512,
@@ -131,7 +131,7 @@ class NewVistorTest(StaticLiveServerTestCase):
         )
 
         inputbox.send_keys('test\n')
-        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox = self.browser.find_element_by_id('new_item')
         self.assertAlmostEqual(
             inputbox.location['x'] + inputbox.size['width'] / 2,
             512,
